@@ -1,0 +1,109 @@
+module Addr2Time(
+	input [19:0] i_SRAM_ADDR,
+	output logic [4:0] o_remain_time,
+	output logic [4:0] o_used_time
+);
+
+always_comb begin
+	if(i_SRAM_ADDR < 0) begin
+		o_used_time = 0;
+		o_remain_time = 31;
+	end else if(i_SRAM_ADDR < 32000) begin
+		o_used_time = 1;
+		o_remain_time = 30;
+	end else if(i_SRAM_ADDR < 64000) begin
+		o_used_time = 2;
+		o_remain_time = 29;
+	end else if(i_SRAM_ADDR < 96000) begin
+		o_used_time = 3;
+		o_remain_time = 28;
+	end else if(i_SRAM_ADDR < 128000) begin
+		o_used_time = 4;
+		o_remain_time = 27;
+	end else if(i_SRAM_ADDR < 160000) begin
+		o_used_time = 5;
+		o_remain_time = 26;
+	end else if(i_SRAM_ADDR < 192000) begin
+		o_used_time = 6;
+		o_remain_time = 25;
+	end else if(i_SRAM_ADDR < 224000) begin
+		o_used_time = 7;
+		o_remain_time = 24;
+	end else if(i_SRAM_ADDR < 256000) begin
+		o_used_time = 8;
+		o_remain_time = 23;
+	end else if(i_SRAM_ADDR < 288000) begin
+		o_used_time = 9;
+		o_remain_time = 22;
+	end else if(i_SRAM_ADDR < 320000) begin
+		o_used_time = 10;
+		o_remain_time = 21;
+	end else if(i_SRAM_ADDR < 352000) begin
+		o_used_time = 11;
+		o_remain_time = 20;
+	end else if(i_SRAM_ADDR < 384000) begin
+		o_used_time = 12;
+		o_remain_time = 19;
+	end else if(i_SRAM_ADDR < 416000) begin
+		o_used_time = 13;
+		o_remain_time = 18;
+	end else if(i_SRAM_ADDR < 448000) begin
+		o_used_time = 14;
+		o_remain_time = 17;
+	end else if(i_SRAM_ADDR < 480000) begin
+		o_used_time = 15;
+		o_remain_time = 16;
+	end else if(i_SRAM_ADDR < 512000) begin
+		o_used_time = 16;
+		o_remain_time = 15;
+	end else if(i_SRAM_ADDR < 544000) begin
+		o_used_time = 17;
+		o_remain_time = 14;
+	end else if(i_SRAM_ADDR < 576000) begin
+		o_used_time = 18;
+		o_remain_time = 13;
+	end else if(i_SRAM_ADDR < 608000) begin
+		o_used_time = 19;
+		o_remain_time = 12;
+	end else if(i_SRAM_ADDR < 640000) begin
+		o_used_time = 20;
+		o_remain_time = 11;
+	end else if(i_SRAM_ADDR < 672000) begin
+		o_used_time = 21;
+		o_remain_time = 10;
+	end else if(i_SRAM_ADDR < 704000) begin
+		o_used_time = 22;
+		o_remain_time = 9;
+	end else if(i_SRAM_ADDR < 736000) begin
+		o_used_time = 23;
+		o_remain_time = 8;
+	end else if(i_SRAM_ADDR < 768000) begin
+		o_used_time = 24;
+		o_remain_time = 7;
+	end else if(i_SRAM_ADDR < 800000) begin
+		o_used_time = 25;
+		o_remain_time = 6;
+	end else if(i_SRAM_ADDR < 832000) begin
+		o_used_time = 26;
+		o_remain_time = 5;
+	end else if(i_SRAM_ADDR < 864000) begin
+		o_used_time = 27;
+		o_remain_time = 4;
+	end else if(i_SRAM_ADDR < 896000) begin
+		o_used_time = 28;
+		o_remain_time = 3;
+	end else if(i_SRAM_ADDR < 928000) begin
+		o_used_time = 29;
+		o_remain_time = 2;
+	end else if(i_SRAM_ADDR < 960000) begin
+		o_used_time = 30;
+		o_remain_time = 1;
+	end else if(i_SRAM_ADDR < 992000) begin
+		o_used_time = 31;
+		o_remain_time = 0;
+	end
+end
+	
+
+
+endmodule

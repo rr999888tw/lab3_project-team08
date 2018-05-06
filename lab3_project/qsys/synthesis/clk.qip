@@ -1,0 +1,22 @@
+set_global_assignment -entity "clk" -library "clk" -name IP_TOOL_NAME "Qsys"
+set_global_assignment -entity "clk" -library "clk" -name IP_TOOL_VERSION "13.1"
+set_global_assignment -entity "clk" -library "clk" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -library "clk" -name SOPCINFO_FILE [file join $::quartus(qip_path) "../../clk.sopcinfo"]
+set_global_assignment -entity "clk" -library "clk" -name SLD_INFO "QSYS_NAME clk HAS_SOPCINFO 1 GENERATION_ID 1462975848"
+set_global_assignment -library "clk" -name MISC_FILE [file join $::quartus(qip_path) "../../clk.cmp"]
+set_global_assignment -library "clk" -name SLD_FILE [file join $::quartus(qip_path) "clk.debuginfo"]
+set_global_assignment -name SYNTHESIS_ONLY_QIP ON
+set_global_assignment -library "clk" -name MISC_FILE [file join $::quartus(qip_path) "../../clk.qsys"]
+
+set_global_assignment -library "clk" -name VERILOG_FILE [file join $::quartus(qip_path) "clk.v"]
+set_global_assignment -library "clk" -name VERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_reset_controller.v"]
+set_global_assignment -library "clk" -name VERILOG_FILE [file join $::quartus(qip_path) "submodules/altera_reset_synchronizer.v"]
+set_global_assignment -library "clk" -name SDC_FILE [file join $::quartus(qip_path) "submodules/altera_reset_controller.sdc"]
+set_global_assignment -library "clk" -name VERILOG_FILE [file join $::quartus(qip_path) "submodules/clk_altpll_0.v"]
+
+set_global_assignment -entity "altera_reset_controller" -library "clk" -name IP_TOOL_NAME "altera_reset_controller"
+set_global_assignment -entity "altera_reset_controller" -library "clk" -name IP_TOOL_VERSION "13.1"
+set_global_assignment -entity "altera_reset_controller" -library "clk" -name IP_TOOL_ENV "Qsys"
+set_global_assignment -entity "clk_altpll_0" -library "clk" -name IP_TOOL_NAME "altpll"
+set_global_assignment -entity "clk_altpll_0" -library "clk" -name IP_TOOL_VERSION "13.1"
+set_global_assignment -entity "clk_altpll_0" -library "clk" -name IP_TOOL_ENV "Qsys"

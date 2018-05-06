@@ -1,0 +1,31 @@
+module TOP(
+	input i_clk,
+	output [3:0] number
+
+
+);
+logic [50:0] counter_r, counter_w;
+logic [3:0] num_r, num_w;
+
+assign num_r = num_w;
+
+always_comb begin
+	if(counter_r == 12000000) begin 
+		counter_w = 0;
+		num_w = num_r +1;
+	end else begin
+		counter_w = counter_r+1;
+		num_w = num_r;
+	end
+endmodule
+
+
+always_ff @(posedge i_clk) begin
+	counter_r <= counter_w;
+	num_r <= num_w;
+
+end
+
+
+
+endmodule

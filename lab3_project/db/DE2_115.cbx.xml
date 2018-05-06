@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<LOG_ROOT>
+	<PROJECT NAME="DE2_115">
+		<CBX_INST_ENTRY INSTANCE_NAME="|DE2_115|Top:t0|PLAY:p1|DSP:dsp1|lpm_divide:Div0" CBX_FILE_NAME="lpm_divide_s0p.tdf"/>
+	</PROJECT>
+</LOG_ROOT>

@@ -1,0 +1,29 @@
+
+State Machine - |DE2_115|I2cSender:I2cS|sclkGenerate:sclk|sclk_counter_r
+Name sclk_counter_r.11 sclk_counter_r.10 sclk_counter_r.01 sclk_counter_r.00 
+sclk_counter_r.00 0 0 0 0 
+sclk_counter_r.01 0 0 1 1 
+sclk_counter_r.10 0 1 0 1 
+sclk_counter_r.11 1 0 0 1 
+
+State Machine - |DE2_115|I2cInitial:I2cI|state_r
+Name state_r.END state_r.WORK state_r.BEGIN state_r.IDLE 
+state_r.IDLE 0 0 0 0 
+state_r.BEGIN 0 0 1 1 
+state_r.WORK 0 1 0 1 
+state_r.END 1 0 0 1 
+
+State Machine - |DE2_115|Top:t0|state_r
+Name state_r.PLAY state_r.RECORD state_r.HOLD state_r.IDLE state_r.PAUSE 
+state_r.IDLE 0 0 0 0 0 
+state_r.HOLD 0 0 1 1 0 
+state_r.RECORD 0 1 0 1 0 
+state_r.PLAY 1 0 0 1 0 
+state_r.PAUSE 0 0 0 1 1 
+
+State Machine - |DE2_115|Top:t0|Record:r1|state_r
+Name state_r.RECORD state_r.RECEIVE state_r.WAIT state_r.IDLE 
+state_r.IDLE 0 0 0 0 
+state_r.WAIT 0 0 1 1 
+state_r.RECEIVE 0 1 0 1 
+state_r.RECORD 1 0 0 1 

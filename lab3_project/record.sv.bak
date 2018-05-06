@@ -1,0 +1,206 @@
+module Record(
+	input i_start,     //由top控制
+	input i_adclrc, ////到底幾Hz????????????????????????????/
+	input i_bclk,   ////12MHz
+	input i_dat,    ////f is 12MHz from top
+	input i_rst,
+	//input i_finish, ///停止錄音//////////////////////按reset即可
+	//////////sram part////////////
+	output o_we,
+	output o_ce,
+	output o_oe,
+	output o_lb,
+	output o_ub,
+	//output o_finish, /////表示收集完16bit 和o_we重複，故取消
+	output [15:0]o_dat,  ///output to sram
+	output [19:0]o_addr 
+);
+
+	localparam IDLE = 0;
+	localparam WAIT = 1;
+	localparam RECEIVE = 2;
+	localparam RECORD = 3;
+
+	logic line;
+	logic [1:0] state_r, state_w;
+	logic [4:0] counter_r, counter_w;  //count to 16
+	//logic finish_r, finish_w;
+	logic [15:0] buffer_r, buffer_w;
+	logic half_cycle_r, half_cycle_w;
+	logic we_r, we_w;
+	logic [15:0] sramdat_r, sramdat_w;
+	logic [19:0] addr_r, addr_w;
+	
+	//assign o_finish = finish_r;
+	assign o_dat = sramdat_r;
+	assign o_ce = 1;
+	assign o_ib = 1;
+	assign o_ub = 1;
+	assign o_oe = 0;    ///in fact this is "don't care" in write mode
+	assign o_we = we_r;
+	assign o_addr = addr_r;
+ 
+
+	always_comb begin
+		case(state_r)
+			IDLE: begin
+				if(i_start) begin
+					if(!i_adclrc) begin
+						state_w = WAIT;
+						counter_w = 0;
+					//	finish_w = 0;
+						buffer_w = buffer_r;
+						half_cycle_w = 0;
+						we_w = we_r;	
+						sramdat_w = sramdat_r;
+						addr_w = addr_r;     
+					end else begin
+						state_w = WAIT;
+						counter_w = 0;
+					//	finish_w = 0;
+						buffer_w = buffer_r;
+						half_cycle_w = 1;
+						we_w = we_r;
+						sramdat_w = sramdat_r;
+						addr_w = addr_r; 
+					end
+				end else begin
+					state_w = IDLE;
+					counter_w = counter_r;
+				//	finish_w = finish_r;
+					buffer_w = buffer_r;
+					half_cycle_w = half_cycle_r;
+					we_w = we_r;
+					sramdat_w = sramdat_r;
+					addr_w = addr_r; 
+				end
+			end
+			WAIT: begin                                 /////是否要等到i_adclrc掉下去才可開始說話？否則錄不到，是否回傳LCD燈？
+				if(half_cycle_r) begin
+					if(!i_adclrc) begin
+						state_w = RECEIVE;
+						counter_w = 0;
+						//finish_w = 0;
+						buffer_w = buffer_r;
+						half_cycle_w = 0;
+						we_w = we_r;
+						sramdat_w = sramdat_r;
+						addr_w = addr_r;
+					end else begin
+						state_w = WAIT;
+						counter_w = 0;
+						//finish_w = 0;
+						buffer_w = buffer_r;
+						half_cycle_w = half_cycle_r;
+						we_w = we_r;
+						sramdat_w = sramdat_r;	
+						addr_w = addr_r;
+					end
+				end else begin
+					if(i_adclrc) begin
+						state_w = RECEIVE;
+						counter_w = counter_r;
+						//finish_w = 0;
+						buffer_w = buffer_r;
+						half_cycle_w = 1;
+						we_w = we_r;
+						sramdat_w = sramdat_r;
+						addr_w = addr_r;
+					end else begin
+						state_w = WAIT;
+						counter_w = counter_r;
+						//finish_w = 0;
+						buffer_w = buffer_r;
+						half_cycle_w = half_cycle_r;
+						we_w = we_r;
+						sramdat_w = sramdat_r;
+						addr_w = addr_r;
+					end
+				end	
+
+			end
+			RECEIVE: begin
+				if(counter_r && (counter_r+1)%16 == 0) begin  ////應該是不會傳到一半i_adclrc跳起，故先不檢查 //// 是否要傳雙聲道？
+					if(!i_adclrc) begin
+						state_w = RECORD;
+						counter_w = counter_r;
+						//finish_w = 1;
+						buffer_w = (buffer_r<<1) + i_dat;
+						half_cycle_w = half_cycle_r;
+						we_w = 1;
+						sramdat_w = sramdat_r;	
+						addr_w = addr_r;
+					end else begin
+						state_w = RECORD;
+						counter_w = counter_r;
+						//finish_w = 1;
+						buffer_w = (buffer_r<<1) + i_dat;
+						half_cycle_w = half_cycle_r;
+						we_w = 0;
+						sramdat_w = sramdat_r;	
+						addr_w = addr_r;
+					end
+				end else begin
+					state_w = RECEIVE;
+					counter_w = counter_r + 1;
+					//finish_w = 0;
+					buffer_w = (buffer_r<<1) + i_dat;////////////MSB first
+					half_cycle_w = half_cycle_r;
+					we_w  = we_r;
+					sramdat_w = sramdat_r;
+					addr_w = addr_r;
+				end
+				
+			end
+			RECORD: begin	
+				if(!i_adclrc) begin
+					state_w = WAIT;
+					counter_w = 0;
+					//finish_w = 1;
+					buffer_w = 16'b0;
+					half_cycle_w = half_cycle_r;
+					we_w = 0;
+					sramdat_w = buffer_r;
+					addr_w = addr_r + 1;
+				end else begin
+					state_w = WAIT;
+					counter_w = 0;
+					//finish_w = 1;
+					buffer_w = 16'b0;
+					half_cycle_w = half_cycle_r;
+					we_w = 0;
+					sramdat_w = sramdat_r;
+					addr_w = addr_r;
+				end  
+			end
+				
+		endcase
+	end
+	
+	always_ff @(negedge i_bclk or negedge i_rst)begin
+		if(!i_rst)begin
+			state_r <= IDLE;
+			counter_r <= 0;
+			//finish_r <= 0;
+			buffer_r <= 0;
+			half_cycle_r <= 0;
+			we_r <= 0;
+			sramdat_r <= 16'b0;
+			addr_r <= 20'b0;
+		end else begin
+			state_r <= state_w;
+			counter_r <= counter_w;
+			//finish_r <= finish_w;
+			buffer_r <= buffer_w;
+			half_cycle_r <= half_cycle_w;
+			we_r <= we_w;
+			sramdat_r <= sramdat_w;
+			addr_r <= addr_w;
+		end
+	end
+endmodule
+
+
+
+
+

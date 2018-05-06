@@ -1,0 +1,200 @@
+
+module DSP (
+	input  i_rst,
+	input  i_start,
+	input  i_pause,
+	input  [17:0] i_switch,
+	output [19:0] SRAM_ADDR,
+	input  [15:0] SRAM_DAT,
+	output o_SRAM_CE_N,	// 0
+	output o_SRAM_LB_N,	// 0
+	output o_SRAM_OE_N,	// 0
+	output o_SRAM_UB_N,	// 0
+	output o_SRAM_WE_N,	// 1
+	input  i_BCLK,
+	input  i_load,
+	input  i_pop,
+	output [15:0] o_outdata,
+	output o_full
+	
+
+);
+
+localparam SLOW = 0;
+localparam FAST = 1;
+localparam MAXCOUNT = maxcount - 1;
+localparam ZEROINTER = 0;
+localparam ONEINTER  = 1;
+
+
+assign o_SRAM_CE_N = 0; // 0
+assign o_SRAM_LB_N = 0;	// 0
+assign o_SRAM_OE_N = 0;	// 0
+assign o_SRAM_UB_N = 0;	// 0
+assign o_SRAM_WE_N = 1;	// 1
+//assign fastslow = i_switch[0];
+assign o_outdata = data_r;
+assign SRAM_ADDR = addr_w;
+assign o_full = full_r;
+
+
+logic [4:0] speed_r, speed_w, count_r, count_w, maxcount;
+logic [15:0] data_r, data_w, nextdata_r, nextdata_w, add_data_r, add_data_w;
+logic [19:0] addr_r, addr_w;
+logic full_r, full_w;
+
+if(i_switch[8]) begin speed_w = 8; maxcount = 8; end
+else if(i_switch[7]) begin speed_w = 7; maxcount = 7; end
+else if(i_switch[6]) begin speed_w = 6; maxcount = 6; end
+else if(i_switch[5]) begin speed_w = 5; maxcount = 5; end
+else if(i_switch[4]) begin speed_w = 4; maxcount = 4; end
+else if(i_switch[3]) begin speed_w = 3; maxcount = 3; end
+else if(i_switch[2]) begin speed_w = 2; maxcount = 2; end
+else begin speed_w = 1; maxcount = 1; end
+
+
+
+always_comb begin
+
+data_w = data_r;
+nextdata_w = nextdata_r;
+addr_w = addr_r;
+count_w = count_r;
+add_data_w = add_data_r;
+
+	if(i_start) begin
+		data_w = 1;
+		nextdata_w = SRAM_DAT;
+		addr_w = 0;
+		count_w = 0;
+		add_data_w = 0;
+		full_w = 0;
+	end else if(i_pause) begin
+		data_w = data_r;
+		nextdata_w = nextdata_r;
+		addr_w = addr_r;
+		count_w = count_r;
+		add_data_w = add_data_r;
+		full_w = 0;
+	end else if(addr_r == 20'b1111_1111_1111_1111_1111) begin
+		data_w = data_r;
+		nextdata_w = nextdata_r;
+		addr_w = addr_r;
+		count_w = count_r;
+		add_data_w = add_data_r;
+		full_w = 1;
+	end else begin
+		case(i_switch[0])
+			SLOW: begin
+				case(i_switch[0]) begin
+					ZEROINTER: begin
+						if(i_load | i_pop) begin
+							if(count_r == MAXCOUNT) begin
+								if(i_pop) addr_w = addr_r + 1;
+								else addr_w = addr_r;
+								count_w = 0;
+								data_w = nextdata_r;
+								nextdata_w = SRAM_DAT;
+								add_data_w = add_data_r;
+								full_w = 0;
+							end else begin
+								data_w = data_r;
+								nextdata_w = nextdata_r;
+								addr_w = addr_r;
+								count_w = count_r + 1;
+								add_data_w = add_data_r;
+								full_w = 0;
+							end
+						end else begin
+							data_w = data_r;
+							nextdata_w = nextdata_r;
+							addr_w = addr_r;
+							count_w = count_r;
+							add_data_w = add_data_r;
+							full_w = 0;
+						end
+					end
+					ONEINTER: begin
+						if(i_load | i_pop) begin
+							
+							if(count_r == MAXCOUNT) begin
+								if(i_pop) addr_w = addr_r + 1;
+								else addr_w = addr_r;
+								count_w = 0;
+								data_w = nextdata_r;
+								nextdata_w = SRAM_DAT;
+								add_data_w = (SRAM_DAT - nextdata_r)/speed_r;
+								full_w = 0;
+							end else begin
+								if(i_pop) data_w = data_r + add_data_r;
+								else data_w = data_r;
+								count_w = count_r + 1;
+								addr_w = addr_r;
+								nextdata_w = nextdata_r;
+								add_data_w = add_data_r;
+								full_w = 0;
+							end
+						
+						end
+						else begin
+							data_w = data_r;
+							nextdata_w = nextdata_r;
+							addr_w = addr_r;
+							count_w = count_r;
+							add_data_w = add_data_r;
+							full_w = 0;
+						end
+					end
+				endcase
+			end
+			FAST: begin
+				if(i_load | i_pop) begin
+					if(i_pop) addr_w = addr_r + speed_r;
+					else addr_w = addr_r;
+					data_w = nextdata_r;
+					nextdata_w = SRAM_DAT;
+					count_w = 0;
+					add_data_w = add_data_r;
+					full_w = 0;
+				end
+				else begin
+					data_w = data_r;
+					nextdata_w = SRAM_DAT;
+					addr_w = addr_r;
+					count_w = 0;
+					add_data_w = add_data_r;
+					full_w = 0;
+				end
+			end
+		endcase
+	end
+	
+	
+	
+end
+
+
+
+
+	always_ff @(posedge i_BCLK or negedge i_rst) begin
+		if(!i_rst)begin
+			data_r <= 0;
+			nextdata_r <= 0;
+			addr_r <= 1;
+			count_r <= 0;
+			speed_r <= 1;
+			add_data_r <= 0;
+			full_r <= 0;
+		end else begin
+			data_r <= data_w;
+			nextdata_r <= nextdata_w;
+			addr_r <= addr_w;
+			count_r <= count_w;
+			speed_r <= speed_w;
+			add_data_r <= add_data_w;
+			full_r <= full_w;
+		end
+	end
+
+endmodule
+

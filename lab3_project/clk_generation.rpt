@@ -1,0 +1,44 @@
+Info: Starting: Create block symbol file (.bsf)
+Info: ip-generate --project-directory=C:/group9/lab3/ --output-directory=C:/group9/lab3/qsys/ --report-file=bsf:C:/group9/lab3/clk.bsf --system-info=DEVICE_FAMILY="Cyclone IV E" --system-info=DEVICE=EP4CE115F29C7 --system-info=DEVICE_SPEEDGRADE=7 --component-file=C:/group9/lab3/clk.qsys
+Progress: Loading lab3/clk.qsys
+Progress: Reading input file
+Progress: Adding clk_0 [clock_source 13.1]
+Progress: Parameterizing module clk_0
+Progress: Adding altpll_0 [altpll 13.1]
+Progress: Parameterizing module altpll_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Warning: clk.altpll_0: altpll_0.pll_slave must be connected to an Avalon-MM master
+Warning: clk.altpll_0: altpll_0.areset_conduit must be exported, or connected to a matching conduit.
+Warning: clk.altpll_0: altpll_0.locked_conduit must be exported, or connected to a matching conduit.
+Warning: clk.altpll_0: altpll_0.phasedone_conduit must be exported, or connected to a matching conduit.
+Info: ip-generate succeeded.
+Info: Finished: Create block symbol file (.bsf)
+Info: 
+Info: Starting: Create HDL design files for synthesis
+Info: ip-generate --project-directory=C:/group9/lab3/ --output-directory=C:/group9/lab3/qsys/synthesis/ --file-set=QUARTUS_SYNTH --report-file=html:C:/group9/lab3/clk.html --report-file=sopcinfo:C:/group9/lab3/clk.sopcinfo --report-file=cmp:C:/group9/lab3/clk.cmp --report-file=qip:C:/group9/lab3/qsys/synthesis/clk.qip --report-file=svd --report-file=regmap:C:/group9/lab3/qsys/synthesis/clk.regmap --report-file=debuginfo:C:/group9/lab3/qsys/synthesis/clk.debuginfo --system-info=DEVICE_FAMILY="Cyclone IV E" --system-info=DEVICE=EP4CE115F29C7 --system-info=DEVICE_SPEEDGRADE=7 --component-file=C:/group9/lab3/clk.qsys --language=VERILOG
+Progress: Loading lab3/clk.qsys
+Progress: Reading input file
+Progress: Adding clk_0 [clock_source 13.1]
+Progress: Parameterizing module clk_0
+Progress: Adding altpll_0 [altpll 13.1]
+Progress: Parameterizing module altpll_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Warning: clk.altpll_0: altpll_0.pll_slave must be connected to an Avalon-MM master
+Warning: clk.altpll_0: altpll_0.areset_conduit must be exported, or connected to a matching conduit.
+Warning: clk.altpll_0: altpll_0.locked_conduit must be exported, or connected to a matching conduit.
+Warning: clk.altpll_0: altpll_0.phasedone_conduit must be exported, or connected to a matching conduit.
+Info: clk: Generating clk "clk" for QUARTUS_SYNTH
+Info: pipeline_bridge_swap_transform: After transform: 2 modules, 2 connections
+Info: No custom instruction connections, skipping transform 
+Info: reset_adaptation_transform: After transform: 3 modules, 4 connections
+Info: altpll_0: "clk" instantiated altpll "altpll_0"
+Info: rst_controller: "clk" instantiated altera_reset_controller "rst_controller"
+Info: clk: Done "clk" with 3 modules, 5 files, 33295 bytes
+Info: ip-generate succeeded.
+Info: Finished: Create HDL design files for synthesis
